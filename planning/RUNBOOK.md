@@ -94,7 +94,7 @@ ssh deploy@<vps-ip>
 sudo cloud-init status
 # should show: status: done
 sudo systemctl status site
-# should show: active (running)
+# should show: active (running) after first deploy; before first deploy, a restart loop on the placeholder binary is acceptable
 sudo systemctl status caddy
 # should show: active (running)
 ```

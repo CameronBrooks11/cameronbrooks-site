@@ -286,12 +286,12 @@ Before committing, verify no placeholder strings remain:
 
 ```sh
 # Check for remaining placeholders
-Select-String -Path "deploy\*" -Pattern "YOUR_SSH_PUBLIC_KEY|YOUR_DOMAIN|YOUR_VPS_IP"
+Select-String -Path "deploy\*" -Pattern "YOUR_SSH_PUBLIC_KEY|YOUR_DOMAIN"
 ```
 
 Expected: zero matches (if you have filled them all in).
 
-If running `make deploy` in Phase 13 from a machine where the VPS IP isn't yet known, set the IP then. The SSH key and domain must be filled in before Phase 12 (cloud-init is pasted into the provider UI at VPS creation time).
+`YOUR_VPS_IP` in `Makefile` is intentionally deferred until Phase 12 Step 6 (after the new VPS is created). The SSH key and domain placeholders in deploy files must be filled in before Phase 12 (cloud-init is pasted into the provider UI at VPS creation time).
 
 ---
 
@@ -332,7 +332,7 @@ git commit -m "phase 11: deploy infrastructure"
 - [ ] `deploy/cloud-init.yaml` exists and is valid YAML (no parse errors)
 - [ ] `deploy/Caddyfile` exists with correct domain name
 - [ ] `deploy/site.service` exists with `User=deploy`, `Restart=on-failure`, `TimeoutStopSec=15`
-- [ ] No placeholder strings remain in any deploy file (`YOUR_SSH_PUBLIC_KEY`, `YOUR_DOMAIN`, `YOUR_VPS_IP`)
+- [ ] No placeholder strings remain in deploy files (`YOUR_SSH_PUBLIC_KEY`, `YOUR_DOMAIN`)
 - [ ] Makefile has `deploy`, `ssh`, `logs` targets
 - [ ] `make build` exits 0 and produces `bin/site` (linux/amd64)
 - [ ] `git status` is clean after commit

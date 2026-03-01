@@ -159,7 +159,7 @@ import (
     "strconv"
     "time"
 
-    "github.com/<user>/cameronbrooks-site/internal/views"
+    "github.com/CameronBrooks11/cameronbrooks-site/internal/views"
 )
 
 // tmplFull: page name → template parsed with layout (for full-page renders)
@@ -303,7 +303,7 @@ func notFound(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-Register on the mux: `mux.HandleFunc("GET /", notFound)` is the catch-all (since `/` without exact match falls through if you use the stdlib mux's exact-match semantics). Handle explicitly in the Home handler by checking `r.URL.Path == "/"`.
+Do not register a separate `GET /` catch-all for `notFound` if `h.Home` is already registered on `GET /`. Keep `h.Home` on `GET /` and handle the catch-all behavior inside that handler by checking `r.URL.Path == "/"`; for all other paths, call `notFound(w, r)`.
 
 ---
 

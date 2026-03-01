@@ -34,7 +34,7 @@ internal/handlers/errors.go      — notFound, internalError
 These apply to every handler in this phase:
 
 1. Parse input from `r` only (path values, query params, headers). No reading body for GET handlers.
-2. Call exactly one service function per page (or zero for static pages). Never call two.
+2. Keep service calls minimal and explicit: most pages call exactly one service function (static pages call zero). Home is the intentional exception and may call two (`GetFeaturedProjects` and `GetRecentPosts`).
 3. Call `render()` as the final action. Never write to `w` directly except in `Healthz` and `Version`.
 4. On service "not found" return → call `notFound(w, r)` then `return`. Never 500 a missing slug.
 5. `ActivePath` must match the nav link href exactly: `"/"`, `"/projects"`, `"/writing"`, `"/about"`, `"/contact"`. System handlers pass `""`.

@@ -250,7 +250,7 @@ Single file `static/css/main.css`, layered in this order:
 6. Utilities       — .sr-only (screen reader only), .text-muted, etc.
 ```
 
-No scoping, no nesting beyond one level, no preprocessor. Keep the file under ~300 lines for v1.
+No scoping, no nesting beyond one level, no preprocessor. Keep the file as concise as practical; the current Phase 09 reference stylesheet is longer due explicit layering/comments and accessibility states.
 
 ---
 

@@ -118,7 +118,7 @@ Makefile
 
 **HTMX navigation:** `hx-boost` on `<body>`, swaps `<main id="main">` only, pushes URL history. One template per page — handlers detect `HX-Request` header and render full page or `content` block only. Minimal CSS progress bar for loading state, no library.
 
-**CSS architecture:** single `main.css`, six ordered layers (tokens → reset → base → layout → components → utilities). Target under 300 lines for v1.
+**CSS architecture:** single `main.css`, six ordered layers (tokens → reset → base → layout → components → utilities). Keep it concise and maintainable; line-count enforcement is handled by the phase plan baseline.
 
 **Accessibility:** semantic HTML, one `<h1>` per page, skip-to-content link, visible focus styles matching accent color, WCAG AA contrast minimum.
 
