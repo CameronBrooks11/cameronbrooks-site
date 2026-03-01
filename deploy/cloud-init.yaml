@@ -1,0 +1,102 @@
+#cloud-config
+
+# === User setup ===
+users:
+  - name: deploy
+    groups: [sudo]
+    shell: /bin/bash
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIGub7/j02uICJqzqPbtdaY5oBivM3BwAq19TOfmkRxV cambrooks3393@gmail.com
+
+# === System packages ===
+package_update: true
+package_upgrade: true
+packages:
+  - ufw
+  - curl
+  - debian-keyring
+  - debian-archive-keyring
+  - apt-transport-https
+
+# === First-boot commands ===
+runcmd:
+  # --- Install Caddy from official apt repo ---
+  - curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+  - curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | tee /etc/apt/sources.list.d/caddy-stable.list
+  - apt-get update
+  - apt-get install -y caddy
+
+  # --- Write Caddyfile ---
+  - |
+    cat > /etc/caddy/Caddyfile << 'EOF'
+    cameronbrooks.net, www.cameronbrooks.net {
+        reverse_proxy 127.0.0.1:8080
+
+        log {
+            output stderr
+            format json
+        }
+
+        header {
+            Strict-Transport-Security "max-age=31536000; includeSubDomains"
+            X-Content-Type-Options "nosniff"
+            X-Frame-Options "SAMEORIGIN"
+            Referrer-Policy "strict-origin-when-cross-origin"
+            -Server
+        }
+    }
+    EOF
+
+  # --- Create placeholder site binary (service won't crash on first start) ---
+  - touch /home/deploy/site
+  - chmod +x /home/deploy/site
+  - chown deploy:deploy /home/deploy/site
+
+  # --- Install systemd service ---
+  - |
+    cat > /etc/systemd/system/site.service << 'EOF'
+    [Unit]
+    Description=cameronbrooks.net Go site
+    After=network.target
+
+    [Service]
+    Type=simple
+    User=deploy
+    Group=deploy
+    WorkingDirectory=/home/deploy
+    ExecStart=/home/deploy/site
+    Restart=on-failure
+    RestartSec=5
+    TimeoutStopSec=15
+    Environment="SITE_ADDR=127.0.0.1:8080"
+    Environment="SITE_ENV=production"
+    EnvironmentFile=-/etc/systemd/system/site.service.d/env.conf
+    NoNewPrivileges=true
+    PrivateTmp=true
+
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+
+  # --- Create secrets drop-in directory ---
+  - mkdir -p /etc/systemd/system/site.service.d
+
+  # --- Enable and start services ---
+  - systemctl daemon-reload
+  - systemctl enable site
+  - systemctl start site
+  - systemctl enable caddy
+  - systemctl restart caddy
+
+  # --- Firewall: allow SSH, HTTP, HTTPS only ---
+  - ufw default deny incoming
+  - ufw default allow outgoing
+  - ufw allow 22/tcp
+  - ufw allow 80/tcp
+  - ufw allow 443/tcp
+  - ufw --force enable
+
+  # --- Unattended security upgrades ---
+  - apt-get install -y unattended-upgrades
+  - dpkg-reconfigure -f noninteractive unattended-upgrades
