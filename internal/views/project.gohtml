@@ -1,0 +1,25 @@
+{{define "content"}}
+<div class="container">
+  <a href="/projects" class="back-link">&larr; Projects</a>
+
+  <article>
+    <header class="article-header">
+      <h1>{{.Data.Title}}</h1>
+      <p class="text-muted">
+        {{.Data.Date}} {{if .Data.Tags}}&mdash; {{range .Data.Tags}}<span class="tag">{{.}}</span> {{end}}{{end}}
+      </p>
+      {{if .Data.Links}}
+      <p class="article-links">
+        {{range .Data.Links}}
+        <a href="{{.URL}}" target="_blank" rel="noopener noreferrer">{{.Label}}</a>
+        {{end}}
+      </p>
+      {{end}}
+    </header>
+
+    <div class="article-body">{{.Data.Body}}</div>
+  </article>
+
+  <a href="/projects" class="back-link">&larr; Projects</a>
+</div>
+{{end}}

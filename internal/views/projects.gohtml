@@ -1,0 +1,21 @@
+{{define "content"}}
+<div class="container">
+  <h1>Projects</h1>
+  <p class="text-muted">A selection of things I have built.</p>
+
+  <ul class="post-list">
+    {{range .Data}}
+    <li class="card">
+      <a href="/projects/{{.Slug}}">{{.Title}}</a>
+      <span class="text-muted"> &mdash; {{.Date}}</span>
+      <p>{{.Description}}</p>
+      {{if .Tags}}
+      <p class="tag-list">{{range .Tags}}<span class="tag">{{.}}</span>{{end}}</p>
+      {{end}}
+    </li>
+    {{else}}
+    <li><p class="text-muted">No projects yet.</p></li>
+    {{end}}
+  </ul>
+</div>
+{{end}}

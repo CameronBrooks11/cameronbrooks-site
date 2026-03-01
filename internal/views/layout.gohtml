@@ -1,11 +1,38 @@
-{{define "layout"}}<!DOCTYPE html>
+{{define "layout"}}
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>{{.Title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{if .Title}}{{.Title}} - {{end}}Cameron Brooks</title>
+    <meta name="description" content="{{.Description}}" />
+    <link rel="stylesheet" href="/static/css/main.css" />
   </head>
-  <body>
+  <body hx-boost="true" hx-target="#main" hx-select="#main" hx-push-url="true">
+    <a href="#main" class="sr-only skip-link">Skip to content</a>
+
+    <div id="progress-bar" aria-hidden="true"></div>
+
+    <header>
+      <nav class="container">
+        <a href="/" class="nav-home">Cameron Brooks</a>
+        <ul class="nav-links">
+          <li><a href="/projects"{{if eq .ActivePath "/projects"}} class="active"{{end}}>Projects</a></li>
+          <li><a href="/writing"{{if eq .ActivePath "/writing"}} class="active"{{end}}>Writing</a></li>
+          <li><a href="/about"{{if eq .ActivePath "/about"}} class="active"{{end}}>About</a></li>
+          <li><a href="/contact"{{if eq .ActivePath "/contact"}} class="active"{{end}}>Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+
     <main id="main">{{template "content" .}}</main>
+
+    <footer class="container">
+      <p>Cameron Brooks &middot; {{.Year}}</p>
+    </footer>
+
+    <script src="/static/htmx.min.js"></script>
+    <script src="/static/js/progress.js"></script>
   </body>
 </html>
 {{end}}

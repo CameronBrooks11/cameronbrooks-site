@@ -1,0 +1,41 @@
+{{define "content"}}
+<div class="container">
+  <section class="home-intro">
+    <p class="text-lg">
+      Hi, I'm Cameron - a software engineer. I build tools, write about what
+      I'm learning, and share the work here.
+    </p>
+  </section>
+
+  {{if .Data.Featured}}
+  <section class="home-section">
+    <h2>Selected Projects</h2>
+    <ul class="post-list">
+      {{range .Data.Featured}}
+      <li class="card">
+        <a href="/projects/{{.Slug}}">{{.Title}}</a>
+        <p class="text-muted">{{.Description}}</p>
+        {{if .Tags}}
+        <p class="tag-list">{{range .Tags}}<span class="tag">{{.}}</span>{{end}}</p>
+        {{end}}
+      </li>
+      {{end}}
+    </ul>
+  </section>
+  {{end}}
+
+  {{if .Data.Recent}}
+  <section class="home-section">
+    <h2>Recent Writing</h2>
+    <ul class="post-list">
+      {{range .Data.Recent}}
+      <li>
+        <a href="/writing/{{.Slug}}">{{.Title}}</a>
+        <span class="text-muted"> - {{.Date}}</span>
+      </li>
+      {{end}}
+    </ul>
+  </section>
+  {{end}}
+</div>
+{{end}}
