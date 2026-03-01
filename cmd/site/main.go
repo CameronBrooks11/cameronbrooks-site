@@ -25,24 +25,7 @@ var (
 	BuildTime string
 )
 
-func main() {
-	logLevel := slog.LevelInfo
-	if os.Getenv("SITE_ENV") == "dev" {
-		logLevel = slog.LevelDebug
-	}
-	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: logLevel,
-	})))
-
-	if err := handlers.InitTemplates(); err != nil {
-		slog.Error("failed to initialize templates", "err", err)
-		os.Exit(1)
-	}
-
-	h := handlers.New()
-	h.AppVersion = Version
-	h.AppBuildTime = BuildTime
-
+func newMux(h *handlers.Handler) *http.ServeMux {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /", h.Home)
@@ -62,6 +45,31 @@ func main() {
 		http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))),
 	)
 
+	return mux
+}
+
+func newHTTPHandler(h *handlers.Handler) http.Handler {
+	return middleware.Chain(newMux(h), middleware.RequestID, middleware.Logger)
+}
+
+func main() {
+	logLevel := slog.LevelInfo
+	if os.Getenv("SITE_ENV") == "dev" {
+		logLevel = slog.LevelDebug
+	}
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level: logLevel,
+	})))
+
+	if err := handlers.InitTemplates(); err != nil {
+		slog.Error("failed to initialize templates", "err", err)
+		os.Exit(1)
+	}
+
+	h := handlers.New()
+	h.AppVersion = Version
+	h.AppBuildTime = BuildTime
+
 	addr := os.Getenv("SITE_ADDR")
 	if addr == "" {
 		addr = ":8080"
@@ -69,7 +77,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr:         addr,
-		Handler:      middleware.Chain(mux, middleware.RequestID, middleware.Logger),
+		Handler:      newHTTPHandler(h),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  120 * time.Second,

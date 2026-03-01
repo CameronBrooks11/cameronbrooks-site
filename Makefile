@@ -17,6 +17,10 @@ LDFLAGS   := -ldflags="-X main.Version=$(VERSION) -X main.BuildTime=$(BUILDTIME)
 dev:
 	go run $(CMD)
 
+.PHONY: smoke
+smoke:
+	./scripts/smoke_local.sh
+
 # --- Build -------------------------------------------------------------------
 .PHONY: build
 build:

@@ -10,6 +10,14 @@ make dev
 
 Requires Go 1.22+. Server starts at http://localhost:8080.
 
+## Smoke check
+
+With the server running locally:
+
+```sh
+make smoke
+```
+
 ## Build
 
 ```sh
