@@ -14,8 +14,8 @@ type Link struct {
 type Project struct {
 	Slug        string
 	Title       string
-	Description string    // one sentence; used in list/card view and meta description
-	Body        string    // raw HTML; do NOT perform trust conversion here or in handlers
+	Description string // one sentence; used in list/card view and meta description
+	Body        string // raw HTML; do NOT perform trust conversion here or in handlers
 	Tags        []string
 	Date        time.Time // publication/completion date; used for sorting and display
 	Links       []Link    // external references: source, demo, paper, etc.

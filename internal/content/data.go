@@ -27,10 +27,10 @@ internal services. The package focuses on predictable request tracing and
 clean log output without adding a framework dependency.</p>
 <p>It includes request ID propagation, status-aware logging, and a simple
 composition helper for standard library handlers.</p>`,
-		Tags:        []string{"go", "middleware", "observability"},
-		Date:        time.Date(2025, time.November, 1, 0, 0, 0, 0, time.UTC),
-		Links:       nil,
-		Featured:    false,
+		Tags:     []string{"go", "middleware", "observability"},
+		Date:     time.Date(2025, time.November, 1, 0, 0, 0, 0, time.UTC),
+		Links:    nil,
+		Featured: false,
 	},
 }
 
