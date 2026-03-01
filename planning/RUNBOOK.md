@@ -35,7 +35,7 @@ Server starts on `http://localhost:8080`. No live-reload in v1 — stop and rest
 | ------------- | --------------------------------------------------------- |
 | `make dev`    | `go run ./cmd/site`                                       |
 | `make build`  | `GOOS=linux GOARCH=amd64 go build -o bin/site ./cmd/site` |
-| `make deploy` | build + scp binary to VPS + restart service               |
+| `make deploy` | build + snapshot previous binary + scp + restart service  |
 | `make ssh`    | open SSH session to the deploy user on the VPS            |
 | `make logs`   | tail journalctl logs from the site service via SSH        |
 
@@ -130,19 +130,17 @@ make smoke
 
 For repeat deploys after infrastructure is ready:
 
-1. Create a rollback copy of the currently running binary:
-
-```sh
-ssh deploy@<vps-ip> "if [ -f ~/site ]; then cp ~/site ~/site.prev; fi"
-```
-
-2. Deploy with the canonical path:
-
 ```sh
 make deploy
 ```
 
-`make deploy` builds locally, copies `bin/site` to `~/site` on VPS, and restarts the systemd service.
+`make deploy` is the canonical path and performs all steps in order:
+
+1. validates `VPS` is set (not `YOUR_VPS_IP`)
+2. builds locally
+3. snapshots current remote binary to `~/site.prev` (when present)
+4. copies `bin/site` to `~/site` on VPS
+5. restarts the systemd service
 
 ---
 
@@ -175,7 +173,7 @@ curl -i https://<your-domain>/healthz
 curl -i https://<your-domain>/version
 curl -i https://<your-domain>/
 curl -i https://<your-domain>/projects
-curl -i https://<your-domain>/blog
+curl -i https://<your-domain>/writing
 curl -i https://<your-domain>/does-not-exist
 make logs
 ```

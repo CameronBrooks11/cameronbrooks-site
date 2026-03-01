@@ -32,7 +32,7 @@ Produces `bin/site` — a self-contained linux/amd64 binary with embedded templa
 make deploy
 ```
 
-Builds locally, scps binary to VPS, restarts systemd service. See `planning/RUNBOOK.md` for first-time VPS setup.
+Builds locally, snapshots the previous VPS binary for rollback (`~/site.prev`), uploads the new binary, then restarts the systemd service. See `planning/RUNBOOK.md` for first-time VPS setup.
 
 ## Planning
 

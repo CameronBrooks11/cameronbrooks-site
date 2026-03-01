@@ -24,8 +24,8 @@ Operator checklist for production deployments. Use this together with `planning/
 
 ## Deploy steps
 
-- [ ] Rollback binary saved on VPS (`~/site.prev`)
 - [ ] `make deploy` executed from repo root
+- [ ] `~/site.prev` exists on VPS after deploy (rollback snapshot)
 
 ## Post-deploy verification
 
@@ -33,7 +33,7 @@ Operator checklist for production deployments. Use this together with `planning/
 - [ ] `curl -i https://<your-domain>/version` returns valid JSON metadata
 - [ ] `curl -i https://<your-domain>/` is `200`
 - [ ] `curl -i https://<your-domain>/projects` is `200`
-- [ ] `curl -i https://<your-domain>/blog` is `200`
+- [ ] `curl -i https://<your-domain>/writing` is `200`
 - [ ] `curl -i https://<your-domain>/does-not-exist` is `404`
 - [ ] `make logs` shows healthy requests and no restart loop
 

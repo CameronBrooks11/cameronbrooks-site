@@ -28,6 +28,24 @@ check_code "/does-not-exist" 404
 check_code "/robots.txt" 200
 check_code "/.well-known/security.txt" 200
 
+home_html="$(curl -s "${BASE_URL}/")"
+if ! grep -q 'id="main"' <<<"${home_html}"; then
+  echo 'FAIL: home page missing main content target (#main)'
+  exit 1
+fi
+if grep -q 'hx-select=' <<<"${home_html}"; then
+  echo 'FAIL: home page contains hx-select; this breaks partial HTMX swaps with current render strategy'
+  exit 1
+fi
+echo "OK: HTMX layout contract"
+
+projects_partial="$(curl -s -H 'HX-Request: true' "${BASE_URL}/projects")"
+if ! grep -q "<h1>Projects</h1>" <<<"${projects_partial}"; then
+  echo "FAIL: HTMX partial for /projects missing expected content"
+  exit 1
+fi
+echo "OK: /projects HTMX partial"
+
 health="$(curl -s "${BASE_URL}/healthz")"
 if [[ "${health}" != "ok" ]]; then
   echo "FAIL: /healthz body was '${health}', expected 'ok'"

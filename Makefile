@@ -27,8 +27,16 @@ build:
 	GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o $(BINARY) $(CMD)
 
 # --- Deploy ------------------------------------------------------------------
+.PHONY: check-vps
+check-vps:
+	@if echo "$(VPS)" | grep -q "YOUR_VPS_IP"; then \
+		echo "ERROR: set VPS before deploy (example: make deploy VPS=deploy@1.2.3.4)"; \
+		exit 1; \
+	fi
+
 .PHONY: deploy
-deploy: build
+deploy: check-vps build
+	ssh $(VPS) "if [ -f ~/site ]; then cp ~/site ~/site.prev; fi"
 	scp $(BINARY) $(VPS):~/site
 	ssh $(VPS) "sudo systemctl restart site"
 
