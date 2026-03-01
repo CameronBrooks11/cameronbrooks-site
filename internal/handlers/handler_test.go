@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -74,15 +75,6 @@ func TestHealthzReturnsOK(t *testing.T) {
 }
 
 func TestVersionReturnsDevDefaultsWhenUnset(t *testing.T) {
-	oldVersion := Version
-	oldBuildTime := BuildTime
-	Version = ""
-	BuildTime = ""
-	t.Cleanup(func() {
-		Version = oldVersion
-		BuildTime = oldBuildTime
-	})
-
 	h := New()
 	req := httptest.NewRequest(http.MethodGet, "/version", nil)
 	rec := httptest.NewRecorder()
@@ -92,8 +84,47 @@ func TestVersionReturnsDevDefaultsWhenUnset(t *testing.T) {
 	if rec.Code != http.StatusOK {
 		t.Fatalf("unexpected status: got %d want %d", rec.Code, http.StatusOK)
 	}
-	if got, want := rec.Body.String(), "version=dev build_time=unknown\n"; got != want {
-		t.Fatalf("unexpected body: got %q want %q", got, want)
+	if got := rec.Header().Get("Content-Type"); got != "application/json" {
+		t.Fatalf("unexpected content type: got %q want %q", got, "application/json")
+	}
+
+	var payload map[string]string
+	if err := json.Unmarshal(rec.Body.Bytes(), &payload); err != nil {
+		t.Fatalf("failed to decode version response: %v", err)
+	}
+
+	if got, want := payload["version"], "dev"; got != want {
+		t.Fatalf("unexpected version: got %q want %q", got, want)
+	}
+	if got, want := payload["build_time"], "unknown"; got != want {
+		t.Fatalf("unexpected build_time: got %q want %q", got, want)
+	}
+}
+
+func TestVersionReturnsInjectedBuildMetadata(t *testing.T) {
+	h := New()
+	h.AppVersion = "abc1234"
+	h.AppBuildTime = "2026-03-01T00:00:00Z"
+
+	req := httptest.NewRequest(http.MethodGet, "/version", nil)
+	rec := httptest.NewRecorder()
+
+	h.Version(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("unexpected status: got %d want %d", rec.Code, http.StatusOK)
+	}
+
+	var payload map[string]string
+	if err := json.Unmarshal(rec.Body.Bytes(), &payload); err != nil {
+		t.Fatalf("failed to decode version response: %v", err)
+	}
+
+	if got, want := payload["version"], "abc1234"; got != want {
+		t.Fatalf("unexpected version: got %q want %q", got, want)
+	}
+	if got, want := payload["build_time"], "2026-03-01T00:00:00Z"; got != want {
+		t.Fatalf("unexpected build_time: got %q want %q", got, want)
 	}
 }
 

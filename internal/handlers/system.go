@@ -1,23 +1,14 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
-// Version and BuildTime are injected at compile time via:
-//
-//	-ldflags="-X github.com/CameronBrooks11/cameronbrooks-site/internal/handlers.Version=$(git rev-parse --short HEAD)"
-//	-ldflags="-X github.com/CameronBrooks11/cameronbrooks-site/internal/handlers.BuildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-//
-// During go run (development), both are empty strings.
-var (
-	Version   string
-	BuildTime string
-)
-
 // Healthz handles GET /healthz.
-// Returns 200 OK with body "ok".
+// Returns 200 OK with plain-text body "ok".
+// Used by Caddy and external monitoring to confirm the process is alive.
 func (h *Handler) Healthz(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
@@ -25,19 +16,24 @@ func (h *Handler) Healthz(w http.ResponseWriter, r *http.Request) {
 }
 
 // Version handles GET /version.
-// Returns the git SHA and build timestamp injected at compile time.
+// Returns the git SHA and build timestamp injected via -ldflags at compile time.
+// During go run (no -ldflags), returns version=dev and build_time=unknown.
 func (h *Handler) Version(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("Content-Type", "application/json")
 
-	version := Version
-	if version == "" {
-		version = "dev"
+	v := h.AppVersion
+	if v == "" {
+		v = "dev"
 	}
 
-	buildTime := BuildTime
-	if buildTime == "" {
-		buildTime = "unknown"
+	bt := h.AppBuildTime
+	if bt == "" {
+		bt = "unknown"
 	}
 
-	fmt.Fprintf(w, "version=%s build_time=%s\n", version, buildTime)
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(map[string]string{
+		"version":    v,
+		"build_time": bt,
+	})
 }
