@@ -1,6 +1,6 @@
-# Phase 12 — VPS Provisioning
+# Phase 20 — VPS Provisioning
 
-**Goal:** Destroy the existing Vultr VPS (the old boilerplate site, committed to Git and safe to nuke), recreate it with `deploy/cloud-init.yaml` as user-data, SSH in to verify cloud-init completed successfully, and update the `cameronbrooks.net` DNS A records to the new VPS IP. At the end of this phase you have a fresh server ready to receive the first deploy — no application code is running yet (the placeholder binary loop-restarts until Phase 13 replaces it, which is expected and harmless).
+**Goal:** Destroy the existing Vultr VPS (the old boilerplate site, committed to Git and safe to nuke), recreate it with `deploy/cloud-init.yaml` as user-data, SSH in to verify cloud-init completed successfully, and update the `cameronbrooks.net` DNS A records to the new VPS IP. At the end of this phase you have a fresh server ready to receive the first deploy — no application code is running yet (the placeholder binary loop-restarts until Phase 21 replaces it, which is expected and harmless).
 
 **Exit gate:** `sudo cloud-init status` → `done`; `sudo systemctl status site` → `active (running)` (or `activating` / restarting on the placeholder binary — both OK); `sudo systemctl status caddy` → `active (running)`; `dig +short cameronbrooks.net` resolves to the VPS IP from your local machine.
 
@@ -129,7 +129,7 @@ Common cause: syntax error in Caddyfile (e.g. wrong domain format). Fix the Cadd
 sudo systemctl status site
 ```
 
-Expected at this stage: **`active (running)`** or **`activating (auto-restart)`** — both are OK. The service is running the placeholder binary (`/home/deploy/site` created by cloud-init as an empty file), which exits immediately and triggers a restart loop. `Restart=on-failure` and `RestartSec=5` will keep it retrying. This is harmless — Phase 13 replaces the binary.
+Expected at this stage: **`active (running)`** or **`activating (auto-restart)`** — both are OK. The service is running the placeholder binary (`/home/deploy/site` created by cloud-init as an empty file), which exits immediately and triggers a restart loop. `Restart=on-failure` and `RestartSec=5` will keep it retrying. This is harmless — Phase 21 replaces the binary.
 
 If the service shows `failed` with many restart attempts, check:
 
@@ -244,4 +244,4 @@ Run these checks from your local machine:
 - [ ] `Resolve-DnsName cameronbrooks.net` resolves to new VPS IP
 - [ ] `Resolve-DnsName www.cameronbrooks.net` resolves to new VPS IP
 
-All boxes checked → proceed to Phase 13.
+All boxes checked → proceed to Phase 21.

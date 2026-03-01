@@ -14,4 +14,7 @@ Working planning documents for the site. Intended for both human reference and A
 | [CONTENT.md](CONTENT.md)             | Go struct definitions for Project and Post, storage strategy, lookup helpers, migration path to markdown  |
 | [TEMPLATES.md](TEMPLATES.md)         | Template file naming, layout structure, PageData, `//go:embed` cache strategy, `render()` helper, routing |
 | [RUNBOOK.md](RUNBOOK.md)             | Local dev setup, VPS first bring-up, DNS, ongoing deploys, secrets management                             |
-| [phases/README.md](phases/README.md) | Ordered phase map: 13 phases from empty repo to live deployed MVP index of all phase_XY_plan.md docs      |
+| [00-mvp-phases/README.md](00-mvp-phases/README.md) | Baseline implementation plan (phases 01-11) that produced the current app foundation |
+| [01-dev-plans/README.md](01-dev-plans/README.md) | Remaining pre-deploy development/hardening plan (phases 12-19) |
+| [02-deploy-phases/phase_20_plan.md](02-deploy-phases/phase_20_plan.md) | Deploy phase 20: VPS provisioning and DNS cutover |
+| [02-deploy-phases/phase_21_plan.md](02-deploy-phases/phase_21_plan.md) | Deploy phase 21: first deploy and live smoke test |

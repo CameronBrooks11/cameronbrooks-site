@@ -1,70 +1,61 @@
-# Phase Plans
+# MVP Foundation Phase Plans (01-11)
 
-Ordered implementation plan from empty repository to live deployed site. Each phase ends in a concrete, independently verifiable state — do not advance until the exit gate passes.
+Baseline implementation plan that produced the current codebase foundation.
+
+These phases are complete and are kept as the historical build record. New work should use:
+- `planning/01-dev-plans/` for pre-deploy hardening (phases 12-19)
+- `planning/02-deploy-phases/` for deployment execution (phases 20-21)
 
 ---
 
 ## Build approach
 
-Phases are ordered **bottom-up**: infrastructure first, data shapes before the logic that uses them, application layers before presentation, everything running locally before touching the server.
-
-Each phase is **narrow**. It produces one working thing. It does not also refactor the previous phase or add "while I'm here" improvements. This keeps the scope of each work session clear and makes failures easy to isolate.
-
-The application must **compile and run** at the end of every phase. No orphaned code, no "I'll wire this up in the next phase." If a phase introduces an interface, that same phase closes the loop.
-
-**Three-stage structure:**
+Phases 01-11 were ordered bottom-up so each layer had stable dependencies before the next layer was added.
 
 ```txt
-Infrastructure  (01–02)  — module, embed skeleton, binary boots
-Application     (03–08)  — data → services → templates → middleware → handlers → server
-Presentation    (09–10)  — CSS layers, HTMX navigation, progress bar
-Operations      (11–13)  — deploy files, VPS provisioning, first live deploy
+Infrastructure  (01-02)  -> module, embed skeleton, binary boots
+Application     (03-08)  -> content, services, templates, middleware, handlers, routing
+Presentation    (09-10)  -> CSS + HTMX/progress
+Deploy Config   (11)     -> cloud-init, Caddyfile, systemd unit
 ```
 
 ---
 
-## Hard sequencing rules
+## Hard sequencing rules used in 01-11
 
-These are the ordering constraints imposed by the code itself, not convention:
-
-| Rule                     | Reason                                                                                                                             |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Phase 02 before Phase 05 | `//go:embed *.gohtml` fails at compile time with no `.gohtml` files; stub templates must exist before the embed directive compiles |
-| Phase 03 before Phase 04 | `internal/services/` imports `internal/content/` types — types must be defined first                                               |
-| Phase 04 before Phase 07 | Handlers call service functions — services must exist                                                                              |
-| Phase 05 before Phase 07 | Handlers call `render()` which references `InitTemplates()` and the template maps — render infrastructure must exist               |
-| Phase 06 before Phase 08 | `main.go` wiring calls `middleware.Chain()` — Chain must be defined                                                                |
-| Phase 08 before Phase 09 | CSS work requires a running server with correct routes to verify in-browser                                                        |
-| Phase 11 before Phase 12 | `cloud-init.yaml` is pasted into the provider UI at VPS creation — it must be written before the VPS is created                    |
-| Phase 12 before Phase 13 | VPS must exist and DNS must resolve before `make deploy` and HTTPS verification                                                    |
+| Rule | Reason |
+| --- | --- |
+| 02 before 05 | `//go:embed *.gohtml` needs template files present |
+| 03 before 04 | services depend on content model/types |
+| 04 before 07 | handlers call service functions |
+| 05 before 07 | handlers rely on `render()` and template caches |
+| 06 before 08 | `main.go` wiring uses `middleware.Chain` |
+| 08 before 09 | CSS validation requires live routes/pages |
+| 10 before 11 | deploy files should reflect final app/runtime contracts |
 
 ---
 
-## Phase registry
+## Registry (01-11)
 
-| #   | Plan file          | Name                                   | What gets built                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Done when                                                                                                                                                                                                                        |
-| --- | ------------------ | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 01  | `phase_01_plan.md` | Repo scaffold                          | `go mod init`, full directory tree per STACK.md layout, root `.gitignore`, root `README.md`, `Makefile` with `dev` and `build` targets (commands only, no running code yet)                                                                                                                                                                                                                                                                                                       | `go mod tidy` exits 0; all directories in the STACK.md layout exist; `git status` shows a clean initial commit                                                                                                                   |
-| 02  | `phase_02_plan.md` | Embed infrastructure & skeleton binary | `internal/views/views.go` (`//go:embed *.gohtml`), stub `layout.gohtml` so embed compiles, `static/static.go` (`//go:embed ...`), placeholder files in `static/css/`, `static/js/`, `static/images/`; minimal `cmd/site/main.go` that starts `http.ListenAndServe(":8080", nil)`                                                                                                                                                                                                  | `go build ./...` exits 0; `go run ./cmd/site` starts on `:8080` without crashing                                                                                                                                                 |
-| 03  | `phase_03_plan.md` | Content model & data                   | `internal/content/project.go`, `post.go` with final types (`time.Time` dates, `Body string`, all fields per CONTENT.md); `internal/content/data.go` with 2–3 hardcoded placeholder entries for each type; `internal/content/lookup.go` with `ProjectBySlug`, `FeaturedProjects`, `PublishedPosts`, `PostBySlug`                                                                                                                                                                   | `go vet ./internal/content/...` passes; lookup functions return expected results when called directly                                                                                                                            |
-| 04  | `phase_04_plan.md` | Services layer                         | `internal/services/projects.go` and `posts.go`; each function calls a content lookup helper and returns a view-ready struct; `Body string` → `template.HTML` conversion happens here and nowhere else                                                                                                                                                                                                                                                                             | `go vet ./internal/services/...` passes; trust boundary is auditable — grep for `template.HTML(` returns only service files                                                                                                      |
-| 05  | `phase_05_plan.md` | Template system                        | `layout.gohtml` (full shell: head, nav, main, footer, HTMX attrs, progress bar div, skip-link); all 9 page templates (`home`, `projects`, `project`, `writing`, `post`, `about`, `contact`, `notFound`, `error`) each defining `{{define "content"}}...{{end}}`; `internal/handlers/render.go` with `PageData`, all per-page `Data` types, `InitTemplates()`, and `render()`                                                                                                      | `InitTemplates()` called from a test or `main()` returns nil; all 9 page keys present in `tmplFull` and `tmplPart` maps                                                                                                          |
-| 06  | `phase_06_plan.md` | Middleware                             | `internal/middleware/middleware.go` (`Middleware` type, `Chain` helper); `requestid.go` (`RequestID` middleware, crypto/rand 8-byte hex ID); `logger.go` (`Logger` middleware, `statusRecorder`, `slog.Info` per request with all fields from STACK.md spec)                                                                                                                                                                                                                      | `go vet ./internal/middleware/...` passes; middleware can be composed with `Chain` and wraps a test handler correctly                                                                                                            |
-| 07  | `phase_07_plan.md` | Handlers                               | `internal/handlers/` — one handler per page (`Home`, `Projects`, `Project`, `Writing`, `Post`, `About`, `Contact`); `Healthz` (200 + `ok`); `Version` (build info from `main.Version` + `main.BuildTime`); package-level `notFound` and `error` functions; handler wires `PageData` fields and calls `render()`                                                                                                                                                                   | `go vet ./internal/handlers/...` passes; every handler calls `render()` with correct `ActivePath`                                                                                                                                |
-| 08  | `phase_08_plan.md` | Routing & main.go                      | Complete `cmd/site/main.go`: `mux` with all 9 named routes + `/healthz` + `/version` + `/static/` static file server; `http.Server` with `ReadTimeout`, `WriteTimeout`, `IdleTimeout`; graceful shutdown via `signal.NotifyContext` + 10-second shutdown context; `SITE_ADDR` env var; `SITE_ENV=dev` → `slog.SetLogLoggerLevel(slog.LevelDebug)`; Makefile `build` target with `-ldflags` injecting `Version` and `BuildTime`                                                    | `go run ./cmd/site` with `SITE_ENV=dev` serves all routes; `/healthz` → `200 ok`; `/version` → build info; `/projects/unknown-slug` → 404 page; Ctrl-C triggers graceful shutdown log line                                       |
-| 09  | `phase_09_plan.md` | CSS                                    | `static/css/main.css` with all 6 ordered layers: (1) tokens — full teal/emerald/lime palette, both light and dark mode blocks, spacing, type scale; (2) reset — box-sizing, margin/padding, img; (3) base — body, a, p, h1–h6, code, pre, ul/ol; (4) layout — `.container`, header, `nav`, `main`, footer, sticky nav, max-widths; (5) components — `.card`, `.post-list`, `.tag`, `.btn`, `.back-link`, `#progress-bar`; (6) utilities — `.sr-only`, `.skip-link`, `.text-muted` | All six pages render correctly in browser at `localhost:8080`; nav active state highlights correctly; focus rings visible; token purity checks pass; WCAG AA spot-check passes on accent colors                                  |
-| 10  | `phase_10_plan.md` | HTMX & progress bar                    | `static/htmx.min.js` vendored (download pinned version); `static/js/progress.js` — `htmx:beforeRequest` sets progress bar width to 80% with CSS transition, `htmx:afterRequest` completes to 100% then fades; verify `hx-boost` + `hx-target="#main"` + `hx-select="#main"` attrs on `<body>` in layout.gohtml; verify `HX-Request` header branch in `render()` returns only `<main>` content                                                                                     | Navigating between pages in browser: no full reload, URL updates in address bar, progress bar animates, scroll position resets; disabling JS in DevTools produces a normal full-page site                                        |
-| 11  | `phase_11_plan.md` | Deploy infrastructure                  | `deploy/cloud-init.yaml` — creates `deploy` user, installs SSH key placeholder, installs Caddy from official apt repo, writes systemd unit, writes Caddyfile, configures ufw (22/80/443), enables unattended upgrades; `deploy/Caddyfile` — host-based block with `reverse_proxy 127.0.0.1:8080`; `deploy/site.service` — non-root `deploy` user, `Restart=on-failure`, `TimeoutStopSec=15`, env file drop-in; Makefile `deploy`, `ssh`, `logs` targets                           | `make build` produces `bin/site` (linux/amd64); all three deploy files present; `cloud-init.yaml` validates as valid YAML; no placeholder strings remain (SSH key, domain name)                                                  |
-| 12  | `phase_12_plan.md` | VPS provisioning                       | Create Debian 12 VPS at chosen provider with `cloud-init.yaml` as user-data; wait for cloud-init to complete; SSH in to verify; create DNS A records (`@` and `www`) pointing to VPS IP at registrar                                                                                                                                                                                                                                                                              | `sudo cloud-init status` → `done`; `sudo systemctl status site` → `active (running)` or restart loop on placeholder binary (both acceptable pre-deploy); `sudo systemctl status caddy` → `active (running)`; `dig +short <domain>` resolves to VPS IP |
-| 13  | `phase_13_plan.md` | First deploy & smoke test              | `make deploy` from local machine; full smoke test: all 6 pages, `/healthz`, `/version`, a nonexistent path; test with JS disabled; check structured logs via `make logs`                                                                                                                                                                                                                                                                                                          | `https://<domain>` loads with valid TLS cert; all pages return 200; `/healthz` returns `ok`; 404 page renders correctly; HTMX navigation works in browser; no-JS navigation works; `make logs` shows structured JSON per request |
+| # | Plan file | Focus |
+| --- | --- | --- |
+| 01 | `phase_01_plan.md` | Repository scaffold and Makefile baseline |
+| 02 | `phase_02_plan.md` | Embed infrastructure + skeleton binary |
+| 03 | `phase_03_plan.md` | Content model and lookup helpers |
+| 04 | `phase_04_plan.md` | Services layer and trust-boundary conversion |
+| 05 | `phase_05_plan.md` | Template system and render pipeline |
+| 06 | `phase_06_plan.md` | Middleware (request ID, logger, chain) |
+| 07 | `phase_07_plan.md` | Handlers and error/system endpoints |
+| 08 | `phase_08_plan.md` | Routing and server wiring |
+| 09 | `phase_09_plan.md` | Production stylesheet |
+| 10 | `phase_10_plan.md` | HTMX vendoring and progress behavior |
+| 11 | `phase_11_plan.md` | Deploy infrastructure files |
 
 ---
 
-## How to use this document
+## Next planning track
 
-1. Work phases in order. Do not skip or combine.
-2. Before starting a phase, open its `phase_XY_plan.md` — it contains the step-by-step implementation detail, exact file contents, and the same exit gate listed here.
-3. When the exit gate passes, commit. The commit message is the phase name.
-4. If a phase exit gate does not pass, do not advance. Diagnose and fix within the current phase scope.
-
-The individual plan files are the implementation source of truth. This document is the map.
+Continue with:
+1. `planning/01-dev-plans/README.md` (phases 12-19)
+2. `planning/02-deploy-phases/phase_20_plan.md`
+3. `planning/02-deploy-phases/phase_21_plan.md`

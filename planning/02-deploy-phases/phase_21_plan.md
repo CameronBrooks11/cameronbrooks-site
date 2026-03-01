@@ -1,4 +1,4 @@
-# Phase 13 — First Deploy & Smoke Test
+# Phase 21 — First Deploy & Smoke Test
 
 **Goal:** Run `make deploy` to push the real binary to the VPS, verify every route returns the correct response, confirm HTMX navigation and TLS work in-browser, test the no-JS fallback, and validate structured logs via `make logs`. This is the final phase — at the end, the site is live.
 
@@ -8,7 +8,7 @@
 
 ## Prerequisites
 
-- Phase 12 complete: VPS is running, `sudo cloud-init status` → `done`, DNS A records resolve to VPS IP
+- Phase 20 complete: VPS is running, `sudo cloud-init status` → `done`, DNS A records resolve to VPS IP
 - Phase 11 complete: Makefile has `deploy` target, `VPS` variable set to `deploy@<vps-ip>`
 - Phase 10 complete: HTMX and progress bar working locally
 - Local machine: `make build` exits 0
@@ -356,7 +356,7 @@ git push origin v0.1.0
 
 - [ ] `/version` JSON shows non-empty `version` and `build_time` (not `dev`)
 
-All boxes checked → **the site is live. Phase 13 complete. All 13 phases complete.**
+All boxes checked → **the site is live. Phase 21 complete. Deploy track complete.**
 
 ---
 
