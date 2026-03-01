@@ -4,7 +4,7 @@ Baseline implementation plan that produced the current codebase foundation.
 
 These phases are complete and are kept as the historical build record. New work should use:
 - `planning/01-dev-plans/` for pre-deploy hardening (phases 12-19)
-- `planning/02-deploy-phases/` for deployment execution (phases 20-21)
+- `docs/deployment.md` for deployment execution
 
 ---
 
@@ -57,5 +57,5 @@ Deploy Config   (11)     -> cloud-init, Caddyfile, systemd unit
 
 Continue with:
 1. `planning/01-dev-plans/README.md` (phases 12-19)
-2. `planning/02-deploy-phases/phase_20_plan.md`
-3. `planning/02-deploy-phases/phase_21_plan.md`
+2. `docs/deployment.md`
+3. `docs/deploy_checklist.md`

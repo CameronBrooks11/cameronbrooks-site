@@ -13,7 +13,7 @@
   - rollback procedure
   - post-deploy verification
 - Add a validation command block for deploy artifacts (placeholders, YAML, binary build).
-- Ensure docs clearly separate dev phases (12-19) from deploy phases (20-21).
+- Ensure docs clearly separate dev phases (12-19) from deployment execution docs.
 
 ---
 

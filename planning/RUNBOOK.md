@@ -62,18 +62,18 @@ Produces `bin/site` — a statically linked linux/amd64 binary. Templates (`inte
 
 ---
 
-## Phase boundaries
+## Deployment boundary
 
-This runbook spans both planning tracks:
+Before production deployment, complete the development hardening track in `planning/01-dev-plans/`.
 
-- Dev hardening: phases 12-19 (`planning/01-dev-plans/`)
-- Deployment: phases 20-21 (`planning/02-deploy-phases/`)
+Deployment execution is documented in:
 
-Do not begin deployment work until phases 12-19 are complete and accepted.
+- `docs/deployment.md`
+- `docs/deploy_checklist.md`
 
 ---
 
-## Pre-deploy checklist (before phase 20/21 execution)
+## Pre-deploy checklist
 
 Run these from the repo root on your local machine:
 
@@ -245,7 +245,7 @@ Once DNS is resolving to your VPS:
 make deploy
 ```
 
-This builds the binary locally, scps it to `deploy@<vps-ip>:~/site`, and SSHes in to restart the systemd service.
+`make deploy` now handles rollback snapshot + upload + restart in one path. See `docs/deployment.md` for the full first-deploy walkthrough.
 
 ### Step 7 — Verify HTTPS
 

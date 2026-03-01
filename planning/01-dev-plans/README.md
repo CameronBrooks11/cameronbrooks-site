@@ -3,8 +3,8 @@
 This track defines the remaining development work that should be completed before infrastructure deployment.
 
 Deployment starts only after this track is complete:
-- [../02-deploy-phases/phase_20_plan.md](../02-deploy-phases/phase_20_plan.md)
-- [../02-deploy-phases/phase_21_plan.md](../02-deploy-phases/phase_21_plan.md)
+- [../../docs/deployment.md](../../docs/deployment.md)
+- [../../docs/deploy_checklist.md](../../docs/deploy_checklist.md)
 
 ---
 
@@ -35,4 +35,4 @@ Deployment starts only after this track is complete:
 
 ## Exit rule for this track
 
-Do not start deploy phases 20/21 until all phase exit gates in 12-19 are complete and documented.
+Do not start production deployment until all phase exit gates in 12-19 are complete and documented.

@@ -2,10 +2,11 @@
 
 Operator checklist for production deployments. Use this together with `planning/RUNBOOK.md`.
 
-## Phase gate
+## Deploy gate
 
 - [ ] Dev phases 12-19 are complete
-- [ ] You are executing deploy phase 20 or 21 (not skipping phase order)
+- [ ] VPS is provisioned and reachable via SSH
+- [ ] DNS points to the target VPS IP
 
 ## Pre-deploy checks
 

@@ -7,4 +7,5 @@ Keep docs concise, current, and executable as written.
 
 ## Current docs
 
+- `deployment.md`: end-to-end VPS provisioning, DNS, first deploy, smoke validation, rollback
 - `deploy_checklist.md`: production deploy checklist (pre-checks, deploy, verification, rollback)

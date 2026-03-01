@@ -16,5 +16,5 @@ Working planning documents for the site. Intended for both human reference and A
 | [RUNBOOK.md](RUNBOOK.md)             | Local dev setup, VPS first bring-up, DNS, ongoing deploys, secrets management                             |
 | [00-mvp-phases/README.md](00-mvp-phases/README.md) | Baseline implementation plan (phases 01-11) that produced the current app foundation |
 | [01-dev-plans/README.md](01-dev-plans/README.md) | Remaining pre-deploy development/hardening plan (phases 12-19) |
-| [02-deploy-phases/phase_20_plan.md](02-deploy-phases/phase_20_plan.md) | Deploy phase 20: VPS provisioning and DNS cutover |
-| [02-deploy-phases/phase_21_plan.md](02-deploy-phases/phase_21_plan.md) | Deploy phase 21: first deploy and live smoke test |
+| [../docs/deployment.md](../docs/deployment.md) | Canonical deployment execution guide (VPS provision, DNS, first deploy, smoke checks) |
+| [../docs/deploy_checklist.md](../docs/deploy_checklist.md) | Production deploy checklist and rollback verification |
