@@ -1,10 +1,10 @@
 # Deploy Checklist
 
-Operator checklist for production deployments. Use this together with `planning/RUNBOOK.md`.
+Operator checklist for production deployments. Use this with `docs/deployment.md`.
 
 ## Deploy gate
 
-- [ ] Dev phases 12-19 are complete
+- [ ] Pre-deploy hardening is complete (tests, CI, docs, and smoke checks)
 - [ ] VPS is provisioned and reachable via SSH
 - [ ] DNS points to the target VPS IP
 

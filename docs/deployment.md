@@ -139,4 +139,4 @@ If `~/site.prev` is missing, deploy the previous known-good commit from git.
 ## Related docs
 
 - `docs/deploy_checklist.md` for operator signoff checklist
-- `planning/RUNBOOK.md` for broader local-dev and maintenance reference
+- `docs/operations.md` for local-dev and maintenance reference

@@ -34,6 +34,6 @@ make deploy
 
 Builds locally, snapshots the previous VPS binary for rollback (`~/site.prev`), uploads the new binary, then restarts the systemd service. See `docs/deployment.md` for VPS setup and first deploy steps.
 
-## Planning
+## Documentation
 
-See `planning/` for full architecture, stack, content model, templates, UI/UX, roadmap, and operational runbook.
+See `docs/` for architecture, content model, frontend contracts, operations, deployment, and deploy checklist.
