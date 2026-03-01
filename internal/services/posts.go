@@ -51,6 +51,9 @@ func GetPosts() []PostView {
 // GetRecentPosts returns the n most recent published posts, for the home page.
 func GetRecentPosts(n int) []PostView {
 	all := GetPosts()
+	if n <= 0 {
+		return []PostView{}
+	}
 	if n > len(all) {
 		n = len(all)
 	}

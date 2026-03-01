@@ -31,6 +31,16 @@ func TestGetPostsReturnsPublishedSortedNewestFirst(t *testing.T) {
 func TestGetRecentPostsClampsToAvailablePosts(t *testing.T) {
 	all := GetPosts()
 
+	recentZero := GetRecentPosts(0)
+	if len(recentZero) != 0 {
+		t.Fatalf("unexpected recent count for zero: got %d want 0", len(recentZero))
+	}
+
+	recentNegative := GetRecentPosts(-1)
+	if len(recentNegative) != 0 {
+		t.Fatalf("unexpected recent count for negative: got %d want 0", len(recentNegative))
+	}
+
 	recentOne := GetRecentPosts(1)
 	if len(recentOne) != 1 {
 		t.Fatalf("unexpected recent count: got %d want 1", len(recentOne))
