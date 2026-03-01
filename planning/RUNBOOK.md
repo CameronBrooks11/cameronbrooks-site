@@ -62,6 +62,133 @@ Produces `bin/site` — a statically linked linux/amd64 binary. Templates (`inte
 
 ---
 
+## Phase boundaries
+
+This runbook spans both planning tracks:
+
+- Dev hardening: phases 12-19 (`planning/01-dev-plans/`)
+- Deployment: phases 20-21 (`planning/02-deploy-phases/`)
+
+Do not begin deployment work until phases 12-19 are complete and accepted.
+
+---
+
+## Pre-deploy checklist (before phase 20/21 execution)
+
+Run these from the repo root on your local machine:
+
+```sh
+git status --short
+go test ./...
+go vet ./...
+go build ./...
+```
+
+Required manual checks:
+
+- CI is green for the commit you plan to deploy
+- No unintentional local changes are mixed into the deploy commit
+- `VPS` in `Makefile` (or command-line override) points at the target server
+
+### Deploy artifact validation commands
+
+Run these before any production deploy:
+
+```sh
+# 1) Ensure deploy templates do not contain unresolved placeholders.
+if rg -n "YOUR_SSH_PUBLIC_KEY|YOUR_DOMAIN" deploy; then
+  echo "Unresolved deploy placeholder(s) found. Stop and fix."
+  exit 1
+else
+  echo "Deploy placeholders: none found."
+fi
+
+# 2) Validate cloud-init YAML parses.
+python3 - <<'PY'
+from pathlib import Path
+import sys
+try:
+    import yaml
+except Exception:
+    sys.exit("PyYAML is required for this check: pip install pyyaml")
+yaml.safe_load(Path("deploy/cloud-init.yaml").read_text(encoding="utf-8"))
+print("deploy/cloud-init.yaml: OK")
+PY
+
+# 3) Build deploy artifact and verify it exists.
+make build
+test -s bin/site && echo "bin/site: OK"
+
+# 4) Smoke-test local behavior before remote rollout.
+# Run `make dev` in another shell first.
+make smoke
+```
+
+---
+
+## Deploy procedure (single command path)
+
+For repeat deploys after infrastructure is ready:
+
+1. Create a rollback copy of the currently running binary:
+
+```sh
+ssh deploy@<vps-ip> "if [ -f ~/site ]; then cp ~/site ~/site.prev; fi"
+```
+
+2. Deploy with the canonical path:
+
+```sh
+make deploy
+```
+
+`make deploy` builds locally, copies `bin/site` to `~/site` on VPS, and restarts the systemd service.
+
+---
+
+## Rollback procedure
+
+Use this when a deploy is unhealthy:
+
+```sh
+ssh deploy@<vps-ip> "test -f ~/site.prev && cp ~/site.prev ~/site"
+ssh deploy@<vps-ip> "sudo systemctl restart site"
+curl -i https://<your-domain>/healthz
+```
+
+If `~/site.prev` is missing, deploy the previously known-good commit from git:
+
+```sh
+git checkout <previous-good-commit>
+make deploy
+git checkout -
+```
+
+---
+
+## Post-deploy verification
+
+Immediately after `make deploy`, run:
+
+```sh
+curl -i https://<your-domain>/healthz
+curl -i https://<your-domain>/version
+curl -i https://<your-domain>/
+curl -i https://<your-domain>/projects
+curl -i https://<your-domain>/blog
+curl -i https://<your-domain>/does-not-exist
+make logs
+```
+
+Expected:
+
+- `/healthz` returns `200` and body `ok`
+- `/version` returns JSON with non-empty `version` and `build_time`
+- key pages return `200`, unknown route returns `404`
+- `make logs` shows healthy request flow and no restart loop
+
+---
+
 ## First VPS bring-up
 
 ### Step 1 — Choose and create a VPS
