@@ -17,7 +17,7 @@ coverage.*
 *.coverprofile
 profile.cov
 
-# Go workspace file (local multi-module; not needed for this single-module repo)
+# Go workspace file
 go.work
 go.work.sum
 
@@ -41,14 +41,3 @@ logs/
 # OS artifacts
 .DS_Store
 Thumbs.db
-
-
-# Generated Static Assets (optional future)
-_site/
-public/build/
-
-
-# Misc
-*.bak
-*.tmp
-*.old
