@@ -1,3 +1,6 @@
 # Docs
 
-This is the documentation for the project. It is for human readers to understand the project and its goals. Keep all documentation clear, concise, and up-to-date. It should provider the reader with a clear dissemination of the project.
+Project documentation for human readers.
+
+Use this directory for operator guides, checklists, and release notes that complement the planning docs in `planning/`.
+Keep docs concise, current, and executable as written.

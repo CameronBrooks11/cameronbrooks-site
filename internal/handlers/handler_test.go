@@ -153,3 +153,44 @@ func TestInternalErrorWrites500(t *testing.T) {
 		t.Fatalf("unexpected status: got %d want %d", rec.Code, http.StatusInternalServerError)
 	}
 }
+
+func TestRobotsTxtReturnsPlainText(t *testing.T) {
+	h := New()
+	req := httptest.NewRequest(http.MethodGet, "/robots.txt", nil)
+	rec := httptest.NewRecorder()
+
+	h.RobotsTxt(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("unexpected status: got %d want %d", rec.Code, http.StatusOK)
+	}
+	if got := rec.Header().Get("Content-Type"); got != "text/plain; charset=utf-8" {
+		t.Fatalf("unexpected content type: got %q want %q", got, "text/plain; charset=utf-8")
+	}
+	body := rec.Body.String()
+	if !strings.Contains(body, "User-agent: *") || !strings.Contains(body, "Allow: /") {
+		t.Fatalf("unexpected body: %q", body)
+	}
+}
+
+func TestSecurityTxtReturnsPlainText(t *testing.T) {
+	h := New()
+	req := httptest.NewRequest(http.MethodGet, "/.well-known/security.txt", nil)
+	rec := httptest.NewRecorder()
+
+	h.SecurityTxt(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("unexpected status: got %d want %d", rec.Code, http.StatusOK)
+	}
+	if got := rec.Header().Get("Content-Type"); got != "text/plain; charset=utf-8" {
+		t.Fatalf("unexpected content type: got %q want %q", got, "text/plain; charset=utf-8")
+	}
+	body := rec.Body.String()
+	if !strings.Contains(body, "Contact: mailto:cambrooks3393@gmail.com") {
+		t.Fatalf("missing contact line in body: %q", body)
+	}
+	if !strings.Contains(body, "Canonical: https://cameronbrooks.net/.well-known/security.txt") {
+		t.Fatalf("missing canonical line in body: %q", body)
+	}
+}

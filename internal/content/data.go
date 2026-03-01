@@ -19,12 +19,16 @@ no third-party dependencies.</p>
 		Featured: true,
 	},
 	{
-		Slug:        "placeholder-project",
-		Title:       "Placeholder Project",
-		Description: "A second project entry to exercise non-featured and list-view rendering.",
-		Body:        `<p>Placeholder body. Replace with real content before go-live.</p>`,
-		Tags:        []string{"placeholder"},
-		Date:        time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC),
+		Slug:        "go-request-middleware-kit",
+		Title:       "Go Request Middleware Kit",
+		Description: "A small middleware package for request IDs, structured logging, and production-safe defaults.",
+		Body: `<p>A reusable middleware set built while iterating on personal and
+internal services. The package focuses on predictable request tracing and
+clean log output without adding a framework dependency.</p>
+<p>It includes request ID propagation, status-aware logging, and a simple
+composition helper for standard library handlers.</p>`,
+		Tags:        []string{"go", "middleware", "observability"},
+		Date:        time.Date(2025, time.November, 1, 0, 0, 0, 0, time.UTC),
 		Links:       nil,
 		Featured:    false,
 	},
@@ -36,9 +40,12 @@ var Posts = []Post{
 	{
 		Slug:    "hello-world",
 		Title:   "Hello, World",
-		Summary: "The first post - a placeholder to exercise the writing routes and templates.",
-		Body: `<p>This is a placeholder post. Replace with real content before go-live.</p>
-<p>The date, tags, and published flag are all exercised by this entry.</p>`,
+		Summary: "Why this site exists, what it is built with, and how I plan to use it.",
+		Body: `<p>This is the first post on the site. It outlines the goals for this
+space: documenting projects, sharing implementation notes, and writing clearly
+about tradeoffs encountered while building.</p>
+<p>The site intentionally stays simple: Go templates, HTMX for progressive
+enhancement, and a deployment model that is easy to operate solo.</p>`,
 		Tags:      []string{"meta"},
 		Date:      time.Date(2026, time.February, 1, 0, 0, 0, 0, time.UTC),
 		Published: true,

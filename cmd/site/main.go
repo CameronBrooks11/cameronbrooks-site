@@ -55,6 +55,8 @@ func main() {
 
 	mux.HandleFunc("GET /healthz", h.Healthz)
 	mux.HandleFunc("GET /version", h.Version)
+	mux.HandleFunc("GET /robots.txt", h.RobotsTxt)
+	mux.HandleFunc("GET /.well-known/security.txt", h.SecurityTxt)
 
 	mux.Handle("GET /static/",
 		http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))),
