@@ -17,7 +17,7 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	render(w, r, "home", http.StatusOK, PageData{
-		Description: "Cameron Brooks - software engineer. Writing.",
+		Description: "Cameron Brooks - engineer & builder. Writing.",
 		ActivePath:  "/",
 		Data: HomeData{
 			Recent: services.GetRecentPosts(5),
