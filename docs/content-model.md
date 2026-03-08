@@ -18,6 +18,7 @@
    summary: One sentence description shown in lists.
    tags: go, web
    published: true
+
    ---
 
    Your Markdown content here. Full CommonMark syntax supported.
@@ -30,13 +31,13 @@ Set `published: false` to keep a draft unroutable and out of all lists.
 
 ## Frontmatter fields
 
-| Field       | Required | Format              | Notes                              |
-|-------------|----------|---------------------|------------------------------------|
-| `title`     | yes      | free text           |                                    |
-| `date`      | yes      | `YYYY-MM-DD`        | Used for sorting and display       |
-| `summary`   | yes      | one sentence        | Used in list view and meta tag     |
-| `tags`      | no       | comma-separated     | e.g. `go, web, tools`              |
-| `published` | yes      | `true` or `false`   | `false` = draft; never routable    |
+| Field       | Required | Format            | Notes                           |
+| ----------- | -------- | ----------------- | ------------------------------- |
+| `title`     | yes      | free text         |                                 |
+| `date`      | yes      | `YYYY-MM-DD`      | Used for sorting and display    |
+| `summary`   | yes      | one sentence      | Used in list view and meta tag  |
+| `tags`      | no       | comma-separated   | e.g. `go, web, tools`           |
+| `published` | yes      | `true` or `false` | `false` = draft; never routable |
 
 ## Post type
 
@@ -56,4 +57,3 @@ Fields available in templates via `PostView`:
 - Unknown slugs return `404`.
 - Home page pulls the 5 most recent published posts.
 - Posts are sorted newest-first everywhere.
-

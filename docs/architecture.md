@@ -17,6 +17,7 @@ Go is never exposed directly to the public internet.
 5. One layout contract. Page content is swapped in `<main id="main">`.
 6. Trust boundary in services. Raw content `Body` is converted to trusted HTML only in `internal/services`.
 7. No repository secrets. Runtime secrets live in server-side systemd drop-ins.
+
 - No runtime filesystem dependency. Content and templates are embedded at compile time; Markdown is parsed once at startup, not per-request.
 
 ## Runtime composition
