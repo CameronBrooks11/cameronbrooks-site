@@ -2,65 +2,58 @@
 
 ## Principles
 
-- MVP content is code-backed in `internal/content`.
-- No database and no request-time file IO.
-- Slugs are canonical URL keys.
-- `Body` is stored as `string`; trust conversion happens in services.
+- Posts are loaded from Markdown files in `internal/content/writing/` at startup.
+- No database and no request-time file IO; the embed is compiled into the binary.
+- Slugs are derived from filenames and are canonical URL keys.
+- `Body` is rendered from Markdown to HTML at load time; trust conversion happens in services.
 
-## Types
+## Adding a new post
 
-### `Project`
+1. Create a new file: `internal/content/writing/my-post-slug.md`
+2. Write the frontmatter, a `---` separator, then the Markdown body:
 
-Fields:
+   ```markdown
+   title: My Post Title
+   date: 2026-03-07
+   summary: One sentence description shown in lists.
+   tags: go, web
+   published: true
+   ---
 
-- `Slug string`
-- `Title string`
-- `Description string`
-- `Body string` (raw HTML)
-- `Tags []string`
-- `Date time.Time`
-- `Links []Link`
-- `Featured bool`
+   Your Markdown content here. Full CommonMark syntax supported.
+   ```
 
-### `Post`
+3. Restart the server (`make dev` locally, `make deploy` for production).
 
-Fields:
+The slug is always the filename without the `.md` extension.
+Set `published: false` to keep a draft unroutable and out of all lists.
+
+## Frontmatter fields
+
+| Field       | Required | Format              | Notes                              |
+|-------------|----------|---------------------|------------------------------------|
+| `title`     | yes      | free text           |                                    |
+| `date`      | yes      | `YYYY-MM-DD`        | Used for sorting and display       |
+| `summary`   | yes      | one sentence        | Used in list view and meta tag     |
+| `tags`      | no       | comma-separated     | e.g. `go, web, tools`              |
+| `published` | yes      | `true` or `false`   | `false` = draft; never routable    |
+
+## Post type
+
+Fields available in templates via `PostView`:
 
 - `Slug string`
 - `Title string`
 - `Summary string`
-- `Body string` (raw HTML)
+- `Body template.HTML` (rendered Markdown, trust-converted in services)
 - `Tags []string`
-- `Date time.Time`
+- `Date string` (formatted: `January 2006`)
 - `Published bool`
 
 ## Publication rules
 
-- `Published=false` posts are never listed or routable.
+- `published: false` posts are never listed or routable.
 - Unknown slugs return `404`.
-- Home page pulls only featured projects and recent published posts.
+- Home page pulls the 5 most recent published posts.
+- Posts are sorted newest-first everywhere.
 
-## Editing workflow
-
-1. Update `internal/content/data.go`.
-2. Keep slug uniqueness and URL-safe format.
-3. Run:
-
-   ```sh
-   go test ./...
-   go vet ./...
-   go build ./...
-   ```
-
-4. Smoke locally (`make dev` + `make smoke`).
-5. Deploy.
-
-## Future migration path
-
-If content volume grows:
-
-- Load markdown files via embed at startup
-- Render once to HTML
-- Populate same `Project`/`Post` view source
-
-This keeps handler/template contracts unchanged.

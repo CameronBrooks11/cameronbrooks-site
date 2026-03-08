@@ -35,8 +35,6 @@ Do not add `hx-select="#main"` with current partial-render strategy.
 ## Route-to-template map
 
 - `/` -> `home.gohtml`
-- `/projects` -> `projects.gohtml`
-- `/projects/{slug}` -> `project.gohtml`
 - `/writing` -> `writing.gohtml`
 - `/writing/{slug}` -> `post.gohtml`
 - `/about` -> `about.gohtml`

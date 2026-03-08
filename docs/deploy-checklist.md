@@ -33,7 +33,6 @@ Operator checklist for production deployments. Use this with `docs/deployment.md
 - [ ] `curl -i https://<your-domain>/healthz` is `200` with body `ok`
 - [ ] `curl -i https://<your-domain>/version` returns valid JSON metadata
 - [ ] `curl -i https://<your-domain>/` is `200`
-- [ ] `curl -i https://<your-domain>/projects` is `200`
 - [ ] `curl -i https://<your-domain>/writing` is `200`
 - [ ] `curl -i https://<your-domain>/does-not-exist` is `404`
 - [ ] `make logs` shows healthy requests and no restart loop

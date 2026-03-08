@@ -2,13 +2,9 @@
 
 This repository is a production-shaped personal site built with Go and deployed as a single binary behind Caddy.
 
-## MVP scope
-
-Public routes:
+## Public routes
 
 - `/`
-- `/projects`
-- `/projects/{slug}`
 - `/writing`
 - `/writing/{slug}`
 - `/about`
@@ -20,21 +16,12 @@ Public routes:
 
 - Server-rendered HTML only (`html/template`)
 - HTMX is progressive enhancement, not a rendering/runtime dependency
-- Content is code-backed (`internal/content`) for MVP (no DB)
+- Writing posts are Markdown files in `internal/content/writing/`, embedded and parsed at startup
 - Deploy target is one Debian VPS with systemd + Caddy
-
-## MVP done criteria
-
-- Site is live on production domain with valid HTTPS
-- All public routes respond with expected status codes
-- Navigation works with and without JavaScript
-- Deploy path is repeatable via `make deploy`
-- Rollback is available via `~/site.prev`
 
 ## Explicitly deferred
 
 - Database and persistent user state
-- Markdown ingestion pipeline
 - Auth and admin surface
 - Contact form backend
 - Analytics and RSS
@@ -47,4 +34,4 @@ Public routes:
 - `docs/frontend.md`
 - `docs/operations.md`
 - `docs/deployment.md`
-- `docs/deploy_checklist.md`
+- `docs/deploy-checklist.md`

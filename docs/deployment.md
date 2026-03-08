@@ -93,7 +93,6 @@ Route checks:
 
 ```sh
 curl -o /dev/null -s -w "%{http_code}\n" https://cameronbrooks.net/
-curl -o /dev/null -s -w "%{http_code}\n" https://cameronbrooks.net/projects
 curl -o /dev/null -s -w "%{http_code}\n" https://cameronbrooks.net/writing
 curl -o /dev/null -s -w "%{http_code}\n" https://cameronbrooks.net/about
 curl -o /dev/null -s -w "%{http_code}\n" https://cameronbrooks.net/contact

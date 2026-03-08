@@ -1,7 +1,7 @@
 package content
 
 // PublishedPosts returns all posts where Published == true.
-// Order follows the declaration order in data.go; callers may re-sort by Date.
+// Order follows the order files are loaded from writing/; callers may re-sort by Date.
 func PublishedPosts() []Post {
 	var out []Post
 	for _, p := range Posts {
