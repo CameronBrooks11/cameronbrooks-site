@@ -17,11 +17,10 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	render(w, r, "home", http.StatusOK, PageData{
-		Description: "Cameron Brooks - software engineer. Projects and writing.",
+		Description: "Cameron Brooks - software engineer. Writing.",
 		ActivePath:  "/",
 		Data: HomeData{
-			Featured: services.GetFeaturedProjects(),
-			Recent:   services.GetRecentPosts(5),
+			Recent: services.GetRecentPosts(5),
 		},
 	})
 }

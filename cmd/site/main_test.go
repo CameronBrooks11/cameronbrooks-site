@@ -32,7 +32,6 @@ func TestRouteContracts(t *testing.T) {
 
 	tests := []routeTest{
 		{name: "home", path: "/", status: http.StatusOK},
-		{name: "projects list", path: "/projects", status: http.StatusOK},
 		{name: "writing list", path: "/writing", status: http.StatusOK},
 		{
 			name:   "healthz",
@@ -88,7 +87,6 @@ func TestRouteContracts(t *testing.T) {
 			},
 		},
 		{name: "not found", path: "/does-not-exist", status: http.StatusNotFound},
-		{name: "project missing", path: "/projects/no-such-project", status: http.StatusNotFound},
 		{name: "post missing", path: "/writing/no-such-post", status: http.StatusNotFound},
 	}
 

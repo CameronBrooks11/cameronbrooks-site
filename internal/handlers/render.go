@@ -23,8 +23,7 @@ type PageData struct {
 // HomeData is the payload for the home page handler.
 // Defined here because it is only used by handlers.Home.
 type HomeData struct {
-	Featured []services.ProjectView
-	Recent   []services.PostView
+	Recent []services.PostView
 }
 
 // tmplFull maps page name -> template parsed with layout (used for full-page renders).
@@ -37,7 +36,7 @@ var (
 // pages lists every template name that must be present in the cache.
 // Each name corresponds to a <name>.gohtml file in internal/views/.
 var pages = []string{
-	"home", "projects", "project", "writing", "post",
+	"home", "writing", "post",
 	"about", "contact", "notFound", "error",
 }
 

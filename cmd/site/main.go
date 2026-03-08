@@ -29,8 +29,6 @@ func newMux(h *handlers.Handler) *http.ServeMux {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /", h.Home)
-	mux.HandleFunc("GET /projects", h.Projects)
-	mux.HandleFunc("GET /projects/{slug}", h.Project)
 	mux.HandleFunc("GET /writing", h.Writing)
 	mux.HandleFunc("GET /writing/{slug}", h.Post)
 	mux.HandleFunc("GET /about", h.About)

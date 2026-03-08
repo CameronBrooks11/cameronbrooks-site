@@ -29,21 +29,6 @@ func TestHomeReturnsNotFoundForNonRootPath(t *testing.T) {
 	}
 }
 
-func TestProjectReturnsNotFoundForUnknownSlug(t *testing.T) {
-	initHandlerTemplates(t)
-
-	h := New()
-	req := httptest.NewRequest(http.MethodGet, "/projects/does-not-exist", nil)
-	req.SetPathValue("slug", "does-not-exist")
-	rec := httptest.NewRecorder()
-
-	h.Project(rec, req)
-
-	if rec.Code != http.StatusNotFound {
-		t.Fatalf("unexpected status: got %d want %d", rec.Code, http.StatusNotFound)
-	}
-}
-
 func TestPostReturnsNotFoundForUnknownSlug(t *testing.T) {
 	initHandlerTemplates(t)
 

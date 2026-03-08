@@ -1,28 +1,5 @@
 package content
 
-// ProjectBySlug returns the project with the given slug, or false if not found.
-// All projects are eligible regardless of Featured flag.
-func ProjectBySlug(slug string) (Project, bool) {
-	for _, p := range Projects {
-		if p.Slug == slug {
-			return p, true
-		}
-	}
-	return Project{}, false
-}
-
-// FeaturedProjects returns all projects where Featured == true.
-// Order follows the declaration order in data.go.
-func FeaturedProjects() []Project {
-	var out []Project
-	for _, p := range Projects {
-		if p.Featured {
-			out = append(out, p)
-		}
-	}
-	return out
-}
-
 // PublishedPosts returns all posts where Published == true.
 // Order follows the declaration order in data.go; callers may re-sort by Date.
 func PublishedPosts() []Post {
