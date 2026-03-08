@@ -1,24 +1,37 @@
 {{define "content"}}
-<div class="container">
-  <section class="home-intro">
-    <p class="text-lg">
-      Hi, I'm Cameron - a software engineer. I build tools, write about what
-      I'm learning, and share the work here.
-    </p>
-  </section>
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <p class="hero-eyebrow">Software Engineer &amp; Builder</p>
+        <h1 class="hero-name">Cameron Brooks</h1>
+        <p class="hero-sub">
+          I build tools, write about what I&rsquo;m learning, and
+          share the work here.
+        </p>
+      </div>
+      <img
+        src="/static/images/recurtreescad_force_points.PNG"
+        alt="Recursive tree structure force point visualization"
+        class="hero-img"
+      />
+    </div>
+  </div>
+</section>
 
-  {{if .Data.Recent}}
+{{if .Data.Recent}}
+<div class="container">
   <section class="home-section">
     <h2>Recent Writing</h2>
     <ul class="post-list">
       {{range .Data.Recent}}
       <li>
         <a href="/writing/{{.Slug}}">{{.Title}}</a>
-        <span class="text-muted"> - {{.Date}}</span>
+        <span class="text-muted"> &mdash; {{.Date}}</span>
       </li>
       {{end}}
     </ul>
   </section>
-  {{end}}
 </div>
+{{end}}
 {{end}}
