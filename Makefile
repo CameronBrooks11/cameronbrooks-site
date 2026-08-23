@@ -1,6 +1,11 @@
 # cameronbrooks-site Makefile
 # Requires Go 1.22+, ssh access to VPS.
 
+# A bare `make` builds; it does not start the server. `dev` is first in the file
+# and would otherwise be the default goal, which makes `make` block on a running
+# process — including for tools that probe a repo by invoking make with no target.
+.DEFAULT_GOAL := build
+
 # --- Configuration -----------------------------------------------------------
 # Override on the command line: make deploy VPS=deploy@1.2.3.4
 VPS ?= deploy@YOUR_VPS_IP
